@@ -1,0 +1,63 @@
+div.title
+{
+	float: left;
+	background-color: #dddddd;
+	width: 80px;
+	text-align: right;
+	padding: 0px;
+	margin: 0px;
+}
+
+div.minions
+{
+	float: left;
+	background-color: #ffdddd;
+	width: 80px;
+	text-align: right;
+	padding: 0px;
+	margin: 0px;
+}
+
+div.center
+{
+	width: 600px;
+	/*width: 60%;*/
+	margin: auto;
+}
+
+div.box
+{
+	background-color: #eeeeee;
+	margin-bottom: 6px;
+	border: 3px solid #666666;
+	padding: 10px;
+}
+
+div.header
+{
+	padding: 10px;
+	padding-bottom: 0px;
+	text-align: right;
+	font-size: 25px;
+}
+
+button
+{
+  background-color: #666666;
+  border: none;
+  color: white;
+  padding: 4px 10px;
+	margin: 1px 1px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+body
+{
+	background-color: #0f4160;
+	background-image: url(background.png), url(repeat.png);
+	background-position: center top, top;
+	background-repeat: no-repeat, repeat-x;
+}
