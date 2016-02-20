@@ -16,6 +16,9 @@ function initiate()
 	addMinionType("minion", 10, 0.1);
 	addMinionType("soldier", 20, 0.2);
 	addMinionType("spy", 100, 1);
+	addMinionType("diplomat", 1000, 3);
+	addMinionType("Lorem", 100000, 0);
+	addMinionType("Ipsum", 100000, 0);
 
 	for(var type in minionType)
 	{
@@ -41,8 +44,9 @@ function initiate()
 
 function test(type)
 {
-	var button = document.createElement("BUTTON");
-	button.appendChild(document.createTextNode(type));
+	var button = document.createElement("button");
+	/*button.appendChild(document.createTextNode(type+"<br>0"));*/
+	button.innerHTML = type + "<br>0";
 	button.id = type + "button";
 	button.addEventListener("click", function(){addMinion(type); return false;});
 	document.getElementById("recruit").appendChild(button);
@@ -66,6 +70,7 @@ function updateValues(dt)
 	for(var type in minionType)
 	{
 		document.getElementById(type).innerHTML = minionType[type].count;
+		document.getElementById(type+"button").innerHTML = type + "<br>" + minionType[type].count;
 	}
 }
 
