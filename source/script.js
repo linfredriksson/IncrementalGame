@@ -22,16 +22,6 @@ function initiate()
 
 	for(var type in minionType)
 	{
-		var div1 = document.createElement("div");
-		div1.className = "minions";
-		div1.innerHTML = type + ":";
-		var div2 = document.createElement("div");
-		div2.id = type;
-		div2.innerHTML = "0";
-		var div0 = document.createElement("div");
-		div0.appendChild(div1);
-		div0.appendChild(div2);
-		document.getElementById("statistics2").appendChild(div0);
 		test(type);
 	}
 
@@ -45,9 +35,8 @@ function initiate()
 function test(type)
 {
 	var button = document.createElement("button");
-	/*button.appendChild(document.createTextNode(type+"<br>0"));*/
 	button.innerHTML = type + "<br>0";
-	button.id = type + "button";
+	button.id = type;
 	button.addEventListener("click", function(){addMinion(type); return false;});
 	document.getElementById("recruit").appendChild(button);
 }
@@ -69,8 +58,7 @@ function updateValues(dt)
 	document.getElementById("notoriety").innerHTML = notoriety;
 	for(var type in minionType)
 	{
-		document.getElementById(type).innerHTML = minionType[type].count;
-		document.getElementById(type+"button").innerHTML = type + "<br>" + minionType[type].count;
+		document.getElementById(type).innerHTML = type + "<br>" + minionType[type].count;
 	}
 }
 
