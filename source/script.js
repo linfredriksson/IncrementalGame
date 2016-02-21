@@ -11,20 +11,20 @@ function initiate()
 {
 	oldTime = new Date();
 	numberOfClicks = 0;
-	money = 0;
+	money = 1000000;
 	notoriety = 0;
 	minions = 0;
-	minionType = {};
-	buildingType = {};
-	activityType = {};
-	continents = {}
+	minionType = [];
+	buildingType = [];
+	activityType = [];
+	continents = [];
 
 	addMinionType("Minion", 10, 0.2, 0.1);
 	addMinionType("Soldier", 100, 0.2, 1);
 	addMinionType("Spy", 1000, 0.2, 2);
 	addMinionType("Diplomat", 2000, 0.2, 3);
-	for(var type in minionType)
-		createButton("recruit", type, addMinion);
+	for(i = 0; i < minionType.length; ++i)
+		createButton("recruit", i, minionType, addMinion);
 
 	addBuildingType("Helipad", 10000, 0.2, 3);
 	addBuildingType("Hangar", 20000, 0.2, 4);
@@ -32,14 +32,14 @@ function initiate()
 	addBuildingType("Armory", 40000, 0.2, 7);
 	addBuildingType("Rocket Silo", 100000, 0.2, 9);
 	addBuildingType("Death Lazer", 1000000, 0.2, 20);
-	for(var type in buildingType)
-		createButton("construct", type, addBuilding);
+	for(i = 0; i < buildingType.length; ++i)
+		createButton("construct", i, buildingType, addBuilding);
 
 	addActivityType("Smuggling", 10000, 0.2, 0.1);
 	addActivityType("Kidnapping", 20000, 0.2, 0.1);
 	addActivityType("Sabotage", 30000, 0.2, 0.2);
-	for(var type in activityType)
-		createButton("activity", type, addActivity);
+	for(i = 0; i < activityType.length; ++i)
+		createButton("activity", i, activityType, addActivity);
 
 	addContinent("Europe", 1000000, true);
 	addContinent("Asia", 1000000, false);
@@ -47,18 +47,18 @@ function initiate()
 	addContinent("South America", 1000000, false);
 	addContinent("Afrika", 1000000, false);
 	addContinent("Oceania", 1000000, false);
-	for(var cont in continents)
-		createButton("expand", cont, null);
+	for(i = 0; i < continents.length; ++i)
+		createButton("expand", i, continents, null);
 
 	document.getElementById("click").onclick = click;
 	document.getElementById("click").className = "button";
 
 	footerText();
-	updateValues();
+	/*updateValues();
 	updateRecruitButtons();
 	updateConstructButtons();
 	updateActivityButtons();
-	updateContinentButtons();
+	updateContinentButtons();*/
 	main();
 }
 
@@ -85,40 +85,41 @@ function main()
 
 function update(array, dt)
 {
-	for(var type in array)
+	for(i = 0; i < array.length; ++i)
 	{
-		var change = array[type].count * array[type].incomePerSecond * dt;
+		var change = array[i].count * array[i].incomePerSecond * dt;
 		notoriety += change;
 		money += change;
 	}
 }
 
-function createButton(boxID, type, callbackFunc)
+function createButton(boxID, arrayID, array, callbackFunc)
 {
 	var button = document.createElement("button");
-	button.id = type;
+	button.id = boxID + arrayID;
 	button.className = "button";
+	button.innerHTML = boxID + arrayID;
 	if(callbackFunc !== null)
-		button.addEventListener("click", function(){callbackFunc(type); return false;});
+		button.addEventListener("click", function(){callbackFunc(arrayID); return false;});
 	document.getElementById(boxID).appendChild(button);
 }
 
 function addMinionType(name, cost, icr, incomePerSecond)
 {
-	minionType[name] = {
+	minionType.push({
 		name: name,
 		cost: cost,
 		currentCost: cost,
 		increaseCostRate: icr,
 		incomePerSecond: incomePerSecond,
 		count: 0
-	};
+	});
 }
 
 // will be used to increase income for a specific type of minion later, instead of working like minions
 function addBuildingType(name, cost, icr, incomePerSecond)
 {
-	buildingType[name] = {
+	buildingType.push({
 		name: name,
 		cost: cost,
 		currentCost: cost,
@@ -127,29 +128,29 @@ function addBuildingType(name, cost, icr, incomePerSecond)
 		increaseType: "", /* used to increase the income of a type of minion */
 		increaseRate: 0, /* how much minion type is increased */
 		count: 0
-	};
+	});
 }
 
 // Will be used to increase total income per second later, instead of working like minions
 function addActivityType(name, cost, icr, incomePerSecond)
 {
-	activityType[name] = {
+	activityType.push({
 		name: name,
 		cost: cost,
 		currentCost: cost,
 		increaseCostRate: icr,
 		incomePerSecond: incomePerSecond,
 		count: 0
-	}
+	});
 }
 
 function addContinent(name, cost, presence)
 {
-	continents[name] = {
+	continents.push({
 		name: name,
 		cost: cost,
 		presence: presence
-	};
+	});
 }
 
 function updateValues()
@@ -161,41 +162,39 @@ function updateValues()
 
 function updateRecruitButtons()
 {
-	updateButtons(minionType);
+	for(i = 0; i < minionType.length; ++i)
+		updateButton("recruit", minionType, i);
 }
 
 function updateConstructButtons()
 {
-	updateButtons(buildingType);
+	for(i = 0; i < buildingType.length; ++i)
+		updateButton("construct", buildingType, i);
 }
 
 function updateActivityButtons()
 {
-	updateButtons(activityType);
+	for(i = 0; i < activityType.length; ++i)
+		updateButton("activity", activityType, i);
 }
 
 function updateContinentButtons()
 {
-	for(var cont in continents)
-	{
-		document.getElementById(cont).innerHTML = cont;
-	}
+	for(i = 0; i < continents.length; ++i)
+		document.getElementById("expand" + i).innerHTML = continents[i].name;
 }
 
-function updateButtons(array)
+function updateButton(boxID, array, arrayID)
 {
-	for(var type in array)
-	{
-		document.getElementById(type).innerHTML = type +
-			"<br>-" + numberWithCommas(array[type].currentCost) +
-			"$<br>+" + array[type].incomePerSecond +
-			"$/s<br># " + array[type].count;
-
-		var className = "button";
-		if(money < array[type].currentCost)
-			className += " buttonDeactivated";
-		document.getElementById(type).className = className;
-	}
+	var obj = array[i];
+	var className = "button";
+	if(money < obj.currentCost)
+		className += " buttonDeactivated";
+	document.getElementById(boxID + i).className = className;
+	document.getElementById(boxID + i).innerHTML = obj.name +
+		"<br>-" + numberWithCommas(obj.currentCost) +
+		"$<br>+" + obj.incomePerSecond +
+		"$/s<br># " + obj.count;
 }
 
 function click()
@@ -207,9 +206,9 @@ function click()
 	return false;
 }
 
-function addMinion(type)
+function addMinion(arrayID)
 {
-	addInstance(minionType, updateRecruitButtons, type);
+	addInstance(minionType, updateRecruitButtons, arrayID);
 }
 
 function addBuilding(type)
@@ -222,9 +221,9 @@ function addActivity(type)
 	addInstance(activityType, updateActivityButtons, type);
 }
 
-function addInstance(array, callbackFunc, type)
+function addInstance(array, callbackFunc, arrayID)
 {
-	var obj = array[type];
+	var obj = array[arrayID];
 	if(money < obj.currentCost) return false;
 	money -= obj.currentCost;
 	++obj.count;

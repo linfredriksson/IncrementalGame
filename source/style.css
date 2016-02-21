@@ -70,6 +70,11 @@ button:active
 	background-color: #454545;
 }
 
+.hidden
+{
+	display: none;
+}
+
 .item
 {
 	background-color: #cfdfff;
