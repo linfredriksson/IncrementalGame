@@ -46,7 +46,7 @@ div.header
 	font-size: 25px;
 }
 
-button
+.button
 {
   background-color: #666666;
   border: none;
@@ -60,9 +60,14 @@ button
 	width: 136px;
 }
 
+.buttonDeactivated
+{
+	background-color: #222222;
+}
+
 button:active
 {
-	background-color: #999999;
+	background-color: #454545;
 }
 
 .item

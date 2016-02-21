@@ -11,7 +11,7 @@ function initiate()
 {
 	oldTime = new Date();
 	numberOfClicks = 0;
-	money = 100000;
+	money = 0;
 	notoriety = 0;
 	minions = 0;
 	minionType = {};
@@ -51,6 +51,7 @@ function initiate()
 		createButton("expand", cont, null);
 
 	document.getElementById("click").onclick = click;
+	document.getElementById("click").className = "button";
 
 	footerText();
 	updateValues();
@@ -73,6 +74,11 @@ function main()
 	update(activityType, dt);
 	updateValues();
 
+	updateRecruitButtons();
+	updateConstructButtons();
+	updateActivityButtons();
+	updateContinentButtons();
+
 	oldTime = newTime;
 	var t = setTimeout(main, 100);
 }
@@ -91,6 +97,7 @@ function createButton(boxID, type, callbackFunc)
 {
 	var button = document.createElement("button");
 	button.id = type;
+	button.className = "button";
 	if(callbackFunc !== null)
 		button.addEventListener("click", function(){callbackFunc(type); return false;});
 	document.getElementById(boxID).appendChild(button);
@@ -183,6 +190,11 @@ function updateButtons(array)
 			"<br>-" + numberWithCommas(array[type].currentCost) +
 			"$<br>+" + array[type].incomePerSecond +
 			"$/s<br># " + array[type].count;
+
+		var className = "button";
+		if(money < array[type].currentCost)
+			className += " buttonDeactivated";
+		document.getElementById(type).className = className;
 	}
 }
 
@@ -213,7 +225,7 @@ function addActivity(type)
 function addInstance(array, callbackFunc, type)
 {
 	var obj = array[type];
-	if(money < obj.cost) return false;
+	if(money < obj.currentCost) return false;
 	money -= obj.currentCost;
 	++obj.count;
 	obj.currentCost += Math.floor(obj.currentCost * obj.increaseCostRate);
