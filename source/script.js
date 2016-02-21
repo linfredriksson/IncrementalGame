@@ -4,7 +4,7 @@ var money;
 var notoriety;
 var minionType;
 var buildingType;
-var continent;
+var continents;
 
 function initiate()
 {
@@ -15,22 +15,22 @@ function initiate()
 	minions = 0;
 	minionType = {};
 	buildingType = {};
-	continent = {}
+	continents = {}
 
-	addMinionType("Minion", 10, 0.1);
-	addMinionType("Soldier", 20, 0.2);
-	addMinionType("Spy", 100, 1);
-	addMinionType("Diplomat", 1000, 3);
+	addMinionType("Minion", 10, 0.2, 0.1);
+	addMinionType("Soldier", 100, 0.1, 1);
+	addMinionType("Spy", 1000, 0.1, 2);
+	addMinionType("Diplomat", 2000, 0.1, 3);
 
 	for(var type in minionType)
 		createRecruitButton(type);
 
-	addBuildingType("Helipad");
-	addBuildingType("Hangar");
-	addBuildingType("Laboratory");
-	addBuildingType("Armory");
-	addBuildingType("Rocket Silo");
-	addBuildingType("Death Lazer");
+	addBuildingType("Helipad", 10000, 3);
+	addBuildingType("Hangar", 20000, 4);
+	addBuildingType("Laboratory", 30000, 5);
+	addBuildingType("Armory", 40000, 7);
+	addBuildingType("Rocket Silo", 100000, 9);
+	addBuildingType("Death Lazer", 1000000, 20);
 
 	for(var type in buildingType)
 		createBuildingButton(type);
@@ -42,7 +42,7 @@ function initiate()
 	addContinent("Afrika", 1000000, false);
 	addContinent("Oceania", 1000000, false);
 
-	for(var cont in continent)
+	for(var cont in continents)
 		createContinentButton(cont);
 
 	document.getElementById("click").onclick = click;
@@ -67,7 +67,7 @@ function createBuildingButton(type)
 {
 	var button = document.createElement("button");
 	button.id = type;
-	/*button.addEventListener("click", function(){; return false;});*/
+	button.addEventListener("click", function(){addBuilding(type); return false;});
 	document.getElementById("construct").appendChild(button);
 }
 
@@ -88,11 +88,13 @@ function createButton(boxID, type)
 	document.getElementById(bodID).appendChild(button);
 }
 
-function addMinionType(name, cost, incomePerSecond)
+function addMinionType(name, cost, icr, incomePerSecond)
 {
 	minionType[name] = {
 		name: name,
 		cost: cost,
+		currentCost: cost,
+		increaseCostRate: icr,
 		incomePerSecond: incomePerSecond,
 		count: 0
 	};
@@ -112,7 +114,7 @@ function addBuildingType(name, cost, incomePerSecond)
 
 function addContinent(name, cost, presence)
 {
-	continent[name] = {
+	continents[name] = {
 		name: name,
 		cost: cost,
 		presence: presence
@@ -121,9 +123,9 @@ function addContinent(name, cost, presence)
 
 function updateValues()
 {
-	document.getElementById("clicks").innerHTML = numberOfClicks;
-	document.getElementById("money").innerHTML = money;
-	document.getElementById("notoriety").innerHTML = notoriety;
+	document.getElementById("clicks").innerHTML = numberWithCommas(numberOfClicks);
+	document.getElementById("money").innerHTML = numberWithCommas(money.toFixed(3));
+	document.getElementById("notoriety").innerHTML = numberWithCommas(notoriety.toFixed(3));
 }
 
 function updateRecruitButtons()
@@ -131,7 +133,7 @@ function updateRecruitButtons()
 	for(var type in minionType)
 	{
 		document.getElementById(type).innerHTML = type +
-			"<br>-" + minionType[type].cost +
+			"<br>-" + numberWithCommas(minionType[type].currentCost) +
 			"$<br>+" + minionType[type].incomePerSecond +
 			"$/s<br># " + minionType[type].count;
 	}
@@ -141,13 +143,16 @@ function updateConstructButtons()
 {
 	for(var type in buildingType)
 	{
-		document.getElementById(type).innerHTML = type + "<br>0";
+		document.getElementById(type).innerHTML = type +
+			"<br>-" + numberWithCommas(buildingType[type].cost) +
+			"$<br>+" + buildingType[type].incomePerSecond +
+			"$/s<br># " + buildingType[type].count;
 	}
 }
 
 function updateContinentButtons()
 {
-	for(var cont in continent)
+	for(var cont in continents)
 	{
 		document.getElementById(cont).innerHTML = cont;
 	}
@@ -158,8 +163,7 @@ function main()
 	var newTime = new Date();
 	var dt = (newTime.getTime() - oldTime.getTime()) * 0.001;
 	var time = newTime.getHours() + ":" + newTime.getMinutes() + ":" + newTime.getSeconds();
-	document.getElementById("txt").innerHTML = time;
-	document.getElementById("dt").innerHTML = dt;
+	document.getElementById("time").innerHTML = time;
 
 	for(var type in minionType)
 	{
@@ -190,10 +194,27 @@ function click()
 
 function addMinion(type)
 {
-	if (money < minionType[type].cost) return false;
-	++minionType[type].count;
-	money = money - minionType[type].cost;
+	var obj = minionType[type];
+	if (money < obj.currentCost) return false;
+	money -= obj.currentCost;
+	++obj.count;
+	obj.currentCost += Math.floor(obj.currentCost * obj.increaseCostRate);
 	updateValues();
 	updateRecruitButtons();
 	return false;
+}
+
+function addBuilding(type)
+{
+	if (money < buildingType[type].cost) return false;
+	++buildingType[type].count;
+	money -= buildingType[type].cost;
+	updateValues();
+	updateConstructButtons();
+	return false;
+}
+
+function numberWithCommas(x)
+{
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
