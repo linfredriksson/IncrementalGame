@@ -41,14 +41,15 @@ function initiate()
 	addActivityType("Smuggling", 10000, 0.2, 0.1);
 	addActivityType("Kidnapping", 20000, 0.2, 0.1);
 	addActivityType("Sabotage", 30000, 0.2, 0.1);
+	addActivityType("counterfeiting", 40000, 0.2, 0.1);
 	createButtons("activity", activityType, addActivity, 3);
 
-	addContinentType("Europe", 1000000, 2, true);
-	addContinentType("Asia", 1000000, 2, false);
-	addContinentType("North America", 1000000, 2, false);
-	addContinentType("South America", 1000000, 2, false);
-	addContinentType("Afrika", 1000000, 2, false);
-	addContinentType("Oceania", 1000000, 2, false);
+	addContinentType("Europe", 1000000000, 2, true);
+	addContinentType("Asia", 1000000000, 2, false);
+	addContinentType("North America", 1000000000, 2, false);
+	addContinentType("South America", 1000000000, 2, false);
+	addContinentType("Afrika", 1000000000, 2, false);
+	addContinentType("Oceania", 1000000000, 2, false);
 	createButtons("expand", continents, addContinent, 0);
 
 	document.getElementById("click").onclick = click;
@@ -84,6 +85,7 @@ function updateValues()
 	var income = 0;
 	for(i = 0; i < availableMinionTypes; ++i)
 		income += minionType[i].incomePerSecond * minionType[i].incomeModifier * minionType[i].count;
+	income = income * incomeModifier;
 	document.getElementById("income").innerHTML = numberWithCommas(income.toFixed(3));
 }
 
@@ -202,7 +204,7 @@ function updateContinentButtons()
 		else
 		{
 			var className = "button";
-			if(money < obj.currentCost)
+			if(money < obj.cost)
 				className += " buttonDeactivated";
 			element.className = className;
 			element.innerHTML = obj.name +
