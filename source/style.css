@@ -75,6 +75,11 @@ button:active
 	background-color: #442222;
 }
 
+.buttonPresence
+{
+	background-color: #224422;
+}
+
 .hidden
 {
 	display: none;

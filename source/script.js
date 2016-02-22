@@ -43,13 +43,13 @@ function initiate()
 	addActivityType("Sabotage", 30000, 0.2, 0.1);
 	createButtons("activity", activityType, addActivity, 3);
 
-	addContinent("Europe", 1000000, true);
-	addContinent("Asia", 1000000, false);
-	addContinent("North America", 1000000, false);
-	addContinent("South America", 1000000, false);
-	addContinent("Afrika", 1000000, false);
-	addContinent("Oceania", 1000000, false);
-	createButtons("expand", continents, null, 0);
+	addContinentType("Europe", 1000000, 2, true);
+	addContinentType("Asia", 1000000, 2, false);
+	addContinentType("North America", 1000000, 2, false);
+	addContinentType("South America", 1000000, 2, false);
+	addContinentType("Afrika", 1000000, 2, false);
+	addContinentType("Oceania", 1000000, 2, false);
+	createButtons("expand", continents, addContinent, 0);
 
 	document.getElementById("click").onclick = click;
 	document.getElementById("click").className = "button";
@@ -154,11 +154,12 @@ function addActivityType(name, cost, icr, incomeModifier)
 	});
 }
 
-function addContinent(name, cost, presence)
+function addContinentType(name, cost, incomeModifier, presence)
 {
 	continents.push({
 		name: name,
 		cost: cost,
+		incomeModifier: incomeModifier,
 		presence: presence
 	});
 }
@@ -190,7 +191,38 @@ function updateActivityButtons()
 function updateContinentButtons()
 {
 	for(i = 0; i < continents.length; ++i)
-		document.getElementById("expand" + i).innerHTML = continents[i].name;
+	{
+		var element = document.getElementById("expand" + i);
+		var obj = continents[i];
+		if(obj.presence == true)
+		{
+			element.className = "button buttonPresence";
+			element.innerHTML = obj.name + "<br><br><br>";
+		}
+		else
+		{
+			var className = "button";
+			if(money < obj.currentCost)
+				className += " buttonDeactivated";
+			element.className = className;
+			element.innerHTML = obj.name +
+				"<br>-" + numberWithCommas(obj.cost) +
+				"<br>+" + obj.incomeModifier * 100 + "%";
+		}
+	}
+}
+
+function updateMinionButton(boxID, array, arrayID)
+{
+	var obj = array[i];
+	var className = "button";
+	if(money < obj.currentCost)
+		className += " buttonDeactivated";
+	document.getElementById(boxID + i).className = className;
+	document.getElementById(boxID + i).innerHTML = obj.name +
+		"<br>-" + numberWithCommas(obj.currentCost) +
+		"$<br>+" + obj.incomePerSecond +
+		"$/s<br># " + obj.count;
 }
 
 function updateConstructButton(boxID, array, arrayID)
@@ -205,19 +237,6 @@ function updateConstructButton(boxID, array, arrayID)
 		"<br>" + minionType[obj.increaseType].name +
 		"<br>+" + obj.increaseModifier * 100 + "%" +
 		"<br># " + obj.count;
-}
-
-function updateMinionButton(boxID, array, arrayID)
-{
-	var obj = array[i];
-	var className = "button";
-	if(money < obj.currentCost)
-		className += " buttonDeactivated";
-	document.getElementById(boxID + i).className = className;
-	document.getElementById(boxID + i).innerHTML = obj.name +
-		"<br>-" + numberWithCommas(obj.currentCost) +
-		"$<br>+" + obj.incomePerSecond +
-		"$/s<br># " + obj.count;
 }
 
 function updateActivityButton(boxID, array, arrayID)
@@ -252,6 +271,16 @@ function addActivity(arrayID)
 	if(!addInstance(arrayID, availableActivityTypes, activityType))
 		return false;
 	incomeModifier += activityType[arrayID].incomeModifier;
+}
+
+function addContinent(arrayID)
+{
+	var obj = continents[arrayID];
+	if(obj.presence == true || money < obj.cost)
+		return false;
+	money -= obj.cost;
+	obj.presence = true;
+	incomeModifier += obj.incomeModifier;
 }
 
 function addInstance(arrayID, totalAvaliable, array)
