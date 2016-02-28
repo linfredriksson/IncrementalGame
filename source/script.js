@@ -1,3 +1,4 @@
+var startTime;
 var oldTime;
 var numberOfClicks;
 var money;
@@ -10,9 +11,10 @@ var continents;
 
 function initiate()
 {
+	startTime = new Date();
 	oldTime = new Date();
 	numberOfClicks = 0;
-	money = 100000000;
+	money = 0;
 	incomeModifier = 1;
 	notoriety = 0;
 	minions = 0;
@@ -28,20 +30,26 @@ function initiate()
 	addMinionType("Soldier", 100, 0.2, 1);
 	addMinionType("Spy", 1000, 0.2, 2);
 	addMinionType("Diplomat", 2000, 0.2, 3);
+	addMinionType("Mercenary", 3000, 0.2, 4);
+	addMinionType("Saboteurs", 4000, 0.2, 5);
+	addMinionType("Technician", 6000, 0.2, 7);
+	addMinionType("Physisist", 8000, 0.2, 9);
 	createButtons("recruit", minionType, addMinion, 3);
 
-	addBuildingType("Helipad", 10000, 0.2, 0, 1);
-	addBuildingType("Hangar", 20000, 0.2, 0, 1);
-	addBuildingType("Laboratory", 30000, 0.2, 1, 1);
-	addBuildingType("Armory", 40000, 0.2, 1, 1);
-	addBuildingType("Rocket Silo", 100000, 0.2, 0, 1);
-	addBuildingType("Death Lazer", 1000000, 0.2, 0, 1);
+	addBuildingType("Training Facility", 10000, 0.2, 0, 1);
+	addBuildingType("Bomb Factory", 20000, 0.2, 1, 1);
+	addBuildingType("Satelite", 30000, 0.2, 2, 1);
+	addBuildingType("Helipad", 40000, 0.2, 3, 1);
+	addBuildingType("Armory", 40000, 0.2, 4, 1);
+	addBuildingType("Rocket Silo", 100000, 0.2, 5, 1);
+	addBuildingType("Laboratory", 300000, 0.2, 6, 1);
+	addBuildingType("Death Lazer", 1000000, 0.2, 7, 1);
 	createButtons("construct", buildingType, addBuilding, 4);
 
 	addActivityType("Smuggling", 10000, 0.2, 0.1);
 	addActivityType("Kidnapping", 20000, 0.2, 0.1);
 	addActivityType("Sabotage", 30000, 0.2, 0.1);
-	addActivityType("counterfeiting", 40000, 0.2, 0.1);
+	addActivityType("Counterfeiting", 40000, 0.2, 0.1);
 	createButtons("activity", activityType, addActivity, 3);
 
 	addContinentType("Europe", 1000000000, 2, true);
@@ -53,7 +61,6 @@ function initiate()
 	createButtons("expand", continents, addContinent, 0);
 
 	document.getElementById("click").onclick = click;
-	document.getElementById("click").className = "button";
 
 	footerText();
 	main();
@@ -63,8 +70,11 @@ function main()
 {
 	var newTime = new Date();
 	var dt = (newTime.getTime() - oldTime.getTime()) * 0.001;
-	var time = newTime.getHours() + ":" + newTime.getMinutes() + ":" + newTime.getSeconds();
-	document.getElementById("time").innerHTML = time;
+	var sec_num = (newTime.getTime() - startTime.getTime()) * 0.001;
+	var hours   = Math.floor(sec_num / 3600);
+	var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+	var seconds = Math.floor(sec_num - (hours * 3600) - (minutes * 60));
+	document.getElementById("time").innerHTML = hours + ":" + minutes + ":" + seconds;
 
 	update(dt);
 	updateValues();
@@ -79,14 +89,15 @@ function main()
 
 function updateValues()
 {
+	var numberOfDecimals = 0;
 	document.getElementById("clicks").innerHTML = numberWithCommas(numberOfClicks);
-	document.getElementById("money").innerHTML = numberWithCommas(money.toFixed(3));
-	document.getElementById("notoriety").innerHTML = numberWithCommas(notoriety.toFixed(3));
+	document.getElementById("money").innerHTML = numberWithCommas(money.toFixed(numberOfDecimals));
+	document.getElementById("notoriety").innerHTML = numberWithCommas(notoriety.toFixed(numberOfDecimals));
 	var income = 0;
 	for(i = 0; i < availableMinionTypes; ++i)
 		income += minionType[i].incomePerSecond * minionType[i].incomeModifier * minionType[i].count;
 	income = income * incomeModifier;
-	document.getElementById("income").innerHTML = numberWithCommas(income.toFixed(3));
+	document.getElementById("income").innerHTML = numberWithCommas(income.toFixed(numberOfDecimals));
 }
 
 function update(dt)

@@ -13,6 +13,14 @@ div.title
 	margin: 0px;
 }
 
+div.info
+{
+	float: left;
+	width: 136px;
+	padding: 0px;
+	margin: 0px;
+}
+
 div.minions
 {
 	float: left;
@@ -55,6 +63,18 @@ div.header
   text-align: left;
   font-size: 16px;
 	width: 136px;
+}
+
+.left
+{
+	float: left;
+}
+
+.bigButton
+{
+	width: 300px;
+	height: 90px;
+	text-align: center;
 }
 
 .buttonDeactivated
